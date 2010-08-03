@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.richfaces.cdk</groupId>
+	<artifactId>aggregator</artifactId>
+	<version>4.0.0.Alpha2</version>
+	<packaging>pom</packaging>
+	<name>JSF Components Development Kit (CDK)</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<modules>
+		<module>bom</module>
+		<module>parent</module>
+		<module>plugins</module>
+		<module>archetypes</module>
+		<!-- <module>docs</module> -->
+		<module>dist</module>
+	</modules>
+	<!-- SCM and distribution management -->
+	<scm>
+		<connection>scm:svn:http://anonsvn.jboss.org/repos/richfaces/root/cdk/branches/richfaces-cdk-4.0.0.Alpha2</connection>
+		<developerConnection>scm:svn:https://svn.jboss.org/repos/richfaces/root/cdk/branches/richfaces-cdk-4.0.0.Alpha2</developerConnection>
+		<url>scm:svn:https://svn.jboss.org/repos/richfaces/root/cdk/branches/richfaces-cdk-4.0.0.Alpha2/cdk</url>
+	</scm>
+
+    <distributionManagement>
+        <downloadUrl>
+            http://www.jboss.org/richfaces/download
+        </downloadUrl>
+        <repository>
+            <id>jboss-releases-repository</id>
+            <name>JBoss Releases Repository</name>
+            <url>${jboss.releases.repo.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>jboss-snapshots-repository</id>
+            <name>JBoss Snapshots Repository</name>
+            <url>${jboss.snapshots.repo.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <!-- Minimal build configuration -->
+	<build>
+	    <finalName>cdk</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<tagBase>https://svn.jboss.org/repos/richfaces/root/cdk/tags</tagBase>
+					<!-- As we need access to our own artifacts -->
+					<preparationGoals>install</preparationGoals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<inherited>false</inherited>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+</project>

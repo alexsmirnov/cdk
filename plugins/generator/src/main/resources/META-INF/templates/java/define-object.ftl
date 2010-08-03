@@ -1,0 +1,1 @@
+${modelItem.type.code} ${modelItem.name} <#if modelItem.initializationExpression.length() != 0> = ${modelItem.initializationExpression}</#if>; 
