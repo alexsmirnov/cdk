@@ -1,0 +1,87 @@
+/*
+ * $Id$
+ *
+ * License Agreement.
+ *
+ * Rich Faces - Natural Ajax for Java Server Faces (JSF)
+ *
+ * Copyright (C) 2007 Exadel, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ */
+
+package org.richfaces.cdk.xmlconfig;
+
+import java.io.File;
+
+import org.richfaces.cdk.CdkException;
+import org.richfaces.cdk.FileManager;
+import org.richfaces.cdk.ModelBuilder;
+import org.richfaces.cdk.Source;
+import org.richfaces.cdk.Sources;
+import org.richfaces.cdk.model.ComponentLibrary;
+import org.richfaces.cdk.xmlconfig.model.FacesConfigAdapter;
+import org.richfaces.cdk.xmlconfig.model.FacesConfigBean;
+
+import com.google.inject.Inject;
+
+/**
+ * <p class="changed_added_4_0">
+ * </p>
+ * 
+ * @author asmirnov@exadel.com
+ * 
+ */
+public class FacesConfigParser implements ModelBuilder {
+
+    private static final FacesConfigAdapter ADAPTER = new FacesConfigAdapter();
+
+    @Inject
+    private JAXB jaxbBinding;
+
+    @Inject
+    private ComponentLibrary library;
+    
+    @Inject @Source(Sources.FACES_CONFIGS)
+    private FileManager configFiles;
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.richfaces.cdk.ModelBuilder#build()
+     */
+    @Override
+    public void build() throws CdkException {
+        for (File file : configFiles.getFiles()) {
+            FacesConfigBean unmarshal = unmarshalFacesConfig(file);
+            if (null != unmarshal) {
+                ComponentLibrary facesConfig = ADAPTER.unmarshal(unmarshal);
+                library.getComponents().addAll(facesConfig.getComponents());
+                library.getRenderKits().addAll(facesConfig.getRenderKits());
+                library.getConverters().addAll(facesConfig.getConverters());
+                // TODO - merge changes into library.
+                // library.getRenderers().addAll(unmarshal.getRenderers());
+                // library.getValidators().addAll(unmarshal.getValidators);
+                // library.getConverters().addAll(unmarshal.getConverters());
+                // library.getBehaviors().addAll(unmarshal.getBehaviors());
+                // library.setExtensions(unmarshal.getExtensions());
+            }
+        }
+    }
+
+    protected FacesConfigBean unmarshalFacesConfig(File file) throws CdkException {
+        return jaxbBinding.unmarshal(file, ComponentLibrary.FACES_CONFIG_SCHEMA_LOCATION, FacesConfigBean.class);
+    }
+}
