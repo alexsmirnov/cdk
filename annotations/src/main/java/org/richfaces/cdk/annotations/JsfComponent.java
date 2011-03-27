@@ -28,15 +28,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.faces.event.FacesEvent;
 
 /**
  * <p class="changed_added_4_0">
  * That annotation marks class as JSF component. The difference with JSF 2.0 &#064;
- * {@link javax.faces.component.FacesComponent} annotation is what this one could marks abstaract class from which a
- * real UI-component implementation will be generated. The value of default {@link #type()} attribute is taken to be
- * <em>component type</em>. The fully qualified class name becomes a component class unless that class is abstract or
- * final component class is defined by the {@link #generate()} attribute value.
+ * {@link javax.faces.component.FacesComponent} annotation is what this one could marks abstract class from which a
+ * real UI-component implementation will be generated. 
  * </p>
  * 
  * @author asmirnov@exadel.com
@@ -47,25 +44,18 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * Annotation class name to use as key for annotation processor class.
+     * Annotation class name to use as key in the annotation processor.
      * </p>
      */
     public static final String NAME = "org.richfaces.cdk.annotations.JsfComponent";
 
-    /**
-     * <p class="changed_added_4_0">
-     * Excplicitly disable component generation
-     * </p>
-     */
-    public static final String DISABLED = "##DISABLED";
 
     /**
      * <p class="changed_added_4_0">
-     * Type of the component. This is mandatory parameter because CDK uses <em>component-type</em> as primary key for
-     * components library model.
+     * Type of the JSF component. 
      * </p>
-     * <p class="todo">
-     * TODO if this value is an empty, component type will be inferred from class name.
+     * <p class="naming">
+     * if this value is an empty, component type would be inferred from class name.
      * </p>
      * 
      * @return component type.
@@ -74,7 +64,7 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * Component famili. If this attribute was empty, it is inferred from the COMPONENT_FAMILY constant or by naming
+     * Component family. For default value, it could be got from the COMPONENT_FAMILY constant or by inferred naming
      * conventions.
      * </p>
      * 
@@ -84,7 +74,8 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * Name of the generated component implementation class.
+     * Name of the generated component implementation class. Default value means nothing to genrate from concrete class,
+     * or infer name by convention for abstract class.
      * </p>
      * 
      * @return
@@ -93,7 +84,7 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * Description used by IDE.
+     * Component description to include into generated faces-config and taglib.
      * </p>
      * 
      * @return
@@ -102,7 +93,7 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * Cenerated Junit test.
+     * Junit test description. Isn't used in RichFaces 4.0, reserved for future releases. 
      * </p>
      * 
      * @return
@@ -120,7 +111,8 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * View Description Language, JSP or Facelets, tags.
+     * Tag description. If generated tags require special handlers, provide separate description for every type of tag, JSP and Facelets.
+     * Otherwise, the only one tag tag description with name and type {@link TagType#All}. 
      * </p>
      * 
      * @return
@@ -129,7 +121,7 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * Events fired by the component.
+     * @{link FacesEvent}s fired by the component.
      * </p>
      * 
      * @return
@@ -147,11 +139,10 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * defines fragments of faces-config.xml that contain standard attribute definitions. CDK also tries to read
-     * META-INF/cdk/attributes/[classname].xml file for all component superclasses and interfaces, therefore it is not
-     * necessary to explicit include definitions for UIComponent and any other standard JSF classes. CDK defines couple
-     * of its own "urn" namespaces: "urn:resource:" for classpath resources, "urn:config:" for for project configuration
-     * folder and "urn:attributes:" for META-INF/cdk/attributes/ in the annotations library.
+     * Defines file names for fragment of faces-config.xml that contain standard attribute definitions. All names relative to the
+     * META-INF/cdk/attributes/ folder in classpath. CDK also tries to read
+     * META-INF/cdk/attributes/[classname].xml file for all component superclasses and interfaces. Therefore, it is not
+     * necessary to explicitly include definitions for UIComponent and any other standard JSF classes.
      * </p>
      * 
      * @return
@@ -160,7 +151,7 @@ public @interface JsfComponent {
 
     /**
      * <p class="changed_added_4_0">
-     * Interfaces that should be implemented in the generated component class. CDK processes all {@link Attribute} and
+     * Interfaces that should be implemented by the generated component class. CDK processes all {@link Attribute} and
      * {@link Facet} annotations in these interfaces
      * </p>
      * 
@@ -169,7 +160,9 @@ public @interface JsfComponent {
     public Class<?>[] interfaces() default {};
     
     /**
-     * <p class="changed_added_4_0"></p>
+     * <p class="changed_added_4_0">Defines third-level renderer specific components. Used to generate a whole family of similar components.
+     * For example, {@link javax.faces.component.UIComponentBase} provides {@link javax.faces.component.UICommand} subclass for all command components, and {@link javax.faces.component.html.HtmlCommandLink} with {@link javax.faces.component.HtmlCommandButton} are
+     * renderer-specific components for links and buttons.</p>
      * @return
      */
     public RendererSpecificComponent[] components() default {};
